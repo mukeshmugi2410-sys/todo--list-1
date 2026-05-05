@@ -1,0 +1,60 @@
+from flask import Flask, request, redirect, render_template
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://flask:flask123@localhost/demo"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+db = SQLAlchemy(app)
+
+class Pro(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    age = db.Column(db.Integer, nullable=False)
+
+# create table
+with app.app_context():
+    db.create_all()
+
+@app.route("/")
+def index():
+    users = Pro.query.all()
+    return render_template("to-do.html", users=users)
+
+# ADD
+@app.route("/add", methods=["POST"])
+def add():
+    name = request.form.get("name")
+    age = request.form.get("age")
+
+    new_user = Pro(name=name, age=age)
+    db.session.add(new_user)
+    db.session.commit()
+
+    return redirect("/")
+
+# DELETE
+@app.route("/delete/<int:id>")
+def delete(id):
+    user = Pro.query.get_or_404(id)
+    db.session.delete(user)
+    db.session.commit()
+    return redirect("/")
+
+# UPDATE
+@app.route("/update/<int:id>", methods=["GET", "POST"])
+def update(id):
+    user = Pro.query.get_or_404(id)
+
+    if request.method == "POST":
+        user.name = request.form.get("name")
+        user.age = request.form.get("age")
+        db.session.commit()
+        return redirect("/")
+
+    return render_template("update.html", user=user)
+
+if __name__ == "__main__":
+    app.run(debug=True)
+    

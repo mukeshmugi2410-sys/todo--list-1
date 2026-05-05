@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do CRUD</title>
+</head>
+<body>
+
+    <h2>Add User</h2>
+    <form action="/add" method="post">
+        <label>Name:</label>
+        <input type="text" name="name" required>
+
+        <label>Age:</label>
+        <input type="number" name="age" required>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    <hr>
+
+    <h2>All Users</h2>
+
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Update</th>
+            <th>Delete</th>
+        </tr>
+
+        {% for user in users %}
+        <tr>
+            <td>{{ user.ID }}</td>
+            <td>{{ user.NAME }}</td>
+            <td>{{ user.AGE }}</td>
+
+            <!-- UPDATE BUTTON -->
+            <td>
+                <a href="/update/{{ user.ID }}">
+                    <button type="button">Update</button>
+                </a>
+            </td>
+
+            <!-- DELETE BUTTON -->
+            <td>
+                <a href="/delete/{{ user.ID }}">
+                    <button type="button">Delete</button>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>
